@@ -82,7 +82,7 @@ function Signup() {
                         <div className="form--el">
                             <button type="submit" className="hero-btn">Войти</button>
                         </div>
-                        <Link to="/" style={{ textDecoration: 'none' }}>Не с нами?</Link>
+                        <Link to="/" style={{ textDecoration: 'none' }}>Уже с нами?</Link>
                     </form>
                 </div>
             </div>
