@@ -1,64 +1,93 @@
-import React, { useState } from 'react'
-import './css/style.css'
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import './css/style.css';
+import { Link, useNavigate } from 'react-router-dom';
+import Validation from './LoginValidation';
+import axios from 'axios';
 
 function Signup() {
-  const [realname, setRealname] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+    const [values, setValues] = useState({
+        realname: '',
+        username: '',
+        password: ''
+    });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    console.log('Логин:', username);
-    console.log('Пароль:', password);
-  };
+    const navigate = useNavigate();
+    const [errors, setErrors] = useState({});
 
-  return (
-    <main>
-        <div className="auth-bg">
-            <div id="auth" className="auth">
-                <h2 className="form--el">Авторизация</h2>
-                <form id="loginForm" className="login" onSubmit={handleSubmit}>
-                <div className="form--el">
-                        <input 
-                            type="text" 
-                            id="realname" 
-                            placeholder="Имя" 
-                            value={realname}
-                            onChange={(e) => setRealname(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form--el">
-                        <input 
-                            type="text" 
-                            id="username" 
-                            placeholder="Логин" 
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form--el">
-                        <input 
-                            type="password" 
-                            id="password"
-                            placeholder="Пароль" 
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form--el">
-                        <button type="submit" className="hero-btn">Войти</button>
-                    </div>    
-                    <Link to="/" style={{textDecoration: 'none'}}>Не с нами?</Link>
-                </form>
+    const handleInput = (e) => {
+        const { name, value } = e.target;
+        setValues(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const validationErrors = Validation(values);
+        setErrors(validationErrors);
+
+        if (Object.keys(validationErrors).length === 0) {
+            console.log('Submitted values:', values);
+            axios.post('http://localhost:8081/signup', values)
+                .then(res => {
+                    console.log('Response from server:', res.data);
+                    if (res.data === "Success") {
+                        navigate('/');
+                    } else {
+                        alert('Ошибка регистрации');
+                    }
+                })
+                .catch(err => console.log(err));
+        }
+    };
+
+    return (
+        <main>
+            <div className="auth-bg">
+                <div id="auth" className="auth">
+                    <h2 className="form--el">Регистрация</h2>
+                    <form id="signupForm" className="signup" onSubmit={handleSubmit}>
+                        <div className="form--el">
+                            <input
+                                type="text"
+                                name="realname"
+                                placeholder="Имя"
+                                value={values.realname}
+                                onChange={handleInput}
+                                maxLength={15}
+                                required
+                            />
+                            {errors.realname && <span className="errroCode">{errors.realname}</span>}
+                        </div>
+                        <div className="form--el">
+                            <input
+                                type="text"
+                                name="username"
+                                placeholder="Логин"
+                                value={values.username}
+                                onChange={handleInput}
+                                required
+                            />
+                            {errors.username && <span className="errroCode">{errors.username}</span>}
+                        </div>
+                        <div className="form--el">
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Пароль"
+                                value={values.password}
+                                onChange={handleInput}
+                                required
+                            />
+                            {errors.password && <span className="errroCode">{errors.password}</span>}
+                        </div>
+                        <div className="form--el">
+                            <button type="submit" className="hero-btn">Войти</button>
+                        </div>
+                        <Link to="/" style={{ textDecoration: 'none' }}>Не с нами?</Link>
+                    </form>
+                </div>
             </div>
-        </div>
-    </main>
-  );
+        </main>
+    );
 }
 
-export default Signup
+export default Signup;

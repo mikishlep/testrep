@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './css/style.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Validation from './LoginValidation';
+import axios from 'axios';
 
 function Login() {
   const [values, setValues] = useState({
@@ -9,6 +10,7 @@ function Login() {
     password: ''
   });
 
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
   const handleInput = (e) => {
@@ -23,7 +25,16 @@ function Login() {
 
     if (Object.keys(validationErrors).length === 0) {
       console.log('Submitted values:', values);
-      // Perform login or other submit actions here
+      axios.post('http://localhost:8081/login', values)
+        .then(res => {
+          console.log('Response from server:', res.data);
+          if (res.data === 'Success') {
+            navigate('/home');
+          } else {
+            alert('Пользователь не найден');
+          }
+        })
+        .catch(err => console.log('Error from server:', err));
     }
   };
 
@@ -31,13 +42,13 @@ function Login() {
     <main>
       <div className="auth-bg">
         <div id="auth" className="auth">
-          <h2 className="form--el">Регистрация</h2>
+          <h2 className="form--el">Вход</h2>
           <form id="loginForm" className="login" onSubmit={handleSubmit}>
             <div className="form--el">
-              <input 
-                type="text" 
-                name="username" 
-                placeholder="Логин" 
+              <input
+                type="text"
+                name="username"
+                placeholder="Логин"
                 value={values.username}
                 onChange={handleInput}
                 maxLength={15}
@@ -46,10 +57,10 @@ function Login() {
               {errors.username && <span className="errroCode">{errors.username}</span>}
             </div>
             <div className="form--el">
-              <input 
-                type="password" 
+              <input
+                type="password"
                 name="password"
-                placeholder="Пароль" 
+                placeholder="Пароль"
                 value={values.password}
                 onChange={handleInput}
                 maxLength={15}
@@ -59,8 +70,8 @@ function Login() {
             </div>
             <div className="form--el">
               <button type="submit" className="hero-btn">Войти</button>
-            </div>    
-            <Link to="/signup" style={{ textDecoration: 'none' }}>Уже с нами?</Link>
+            </div>
+            <Link to="/signup" style={{ textDecoration: 'none' }}>Не с нами?</Link>
           </form>
         </div>
       </div>
