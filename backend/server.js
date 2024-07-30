@@ -45,15 +45,20 @@ app.post('/signup', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    const sql = "SELECT * FROM login WHERE `name` = ? AND `password` =  ?";
+    const sql = "SELECT * FROM login WHERE `login` = ? AND `password` =  ?";
+    console.log('Received login request:', req.body);
+
     db.query(sql, [req.body.username, req.body.password], (err, data) => {
         if (err) {
             console.error('Ошибка выполнения запроса:', err);
             return res.json("Error");
         }
-        // ДОПИЛИТЬ
-        return res.json('Success');
-        // ДОПИЛИТЬ
+        console.log('Query result:', data);
+        if (data.length > 0) {
+            return res.json('Success');
+        } else {
+            return res.json('Fail');
+        }
         
     });
 });
