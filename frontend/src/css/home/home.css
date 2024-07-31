@@ -1,0 +1,16 @@
+@import url(./dashboard/dashboard.css);
+@import url(./header/header.css);
+@import url(./sidebar/sidebar.css);
+
+:root {
+    --home-main: #262535;
+    --home-secondary: #302e42;
+}
+
+.icon {
+    vertical-align: middle;
+    line-height: 1px;
+    font-size: 1.3rem;
+    color: #fff;
+}
+

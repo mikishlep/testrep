@@ -9,9 +9,13 @@
 
 main {
     height: 100vh;
-    background: linear-gradient(rgba(255, 255, 255, 0.8), rgba(180, 255, 218, 0.8));
+    background: linear-gradient(to bottom right, var(--home-main), #7371a2);
     background-repeat: no-repeat;
     background-size: cover;
+}
+
+body {
+    background-color: var(--home-main);
 }
 
 .auth {
@@ -38,4 +42,14 @@ main {
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 260px 1fr 1fr 1fr;
+    grid-template-rows: 0.2fr 3fr;
+    grid-template-areas: 
+    'sidebar header header header'
+    'sidebar dashboard dashboard dashboard';
+    height: 100vh;
 }

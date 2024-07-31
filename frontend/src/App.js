@@ -2,7 +2,7 @@ import React from 'react'
 import Login from './reglog/Login'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Signup from './reglog/Signup'
-import Home from './Home'
+import Home from './homepage/Home'
 
 function App() {
   return (

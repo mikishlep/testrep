@@ -1,6 +1,6 @@
 .hero-btn {
     font-weight: 700;
-    background-color: var(--main-color);
+    background-color: #605d8d;
     padding: 10px 40px;
     color: #fff;
     border-radius: 10px;
@@ -8,9 +8,9 @@
 }
 
 .hero-btn:hover {
-    -webkit-box-shadow: -1px 0px 42px 0px rgba(0, 45, 40, 0.2);
-    -moz-box-shadow: -1px 0px 42px 0px rgba(0, 45, 40, 0.2);
-    box-shadow: -1px 0px 10px 0px rgba(0, 45, 40, 0.2);
+    -webkit-box-shadow: -1px 0px 42px 0px rgba(75, 66, 145, 0.2);
+    -moz-box-shadow: -1px 0px 42px 0px rgba(75, 66, 145, 0.2);
+    box-shadow: -1px 0px 10px 0px rgba(75, 66, 145, 0.2);
     transition: .3s;
     transform: scale(1.02);
 }
