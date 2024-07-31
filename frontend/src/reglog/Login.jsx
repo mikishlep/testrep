@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './css/style.css';
+import '../css/style.css';
 import { Link, useNavigate } from 'react-router-dom';
 import Validation from './LoginValidation';
 import axios from 'axios';

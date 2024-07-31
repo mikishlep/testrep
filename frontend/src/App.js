@@ -1,7 +1,7 @@
 import React from 'react'
-import Login from './Login'
+import Login from './reglog/Login'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Signup from './Signup'
+import Signup from './reglog/Signup'
 import Home from './Home'
 
 function App() {
