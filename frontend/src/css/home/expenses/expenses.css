@@ -1,0 +1,55 @@
+.add-list {
+    background: var(--home-secondary);
+    padding: 1rem 1rem;
+    border-radius: 10px;
+    margin: 1rem 0;
+    display: grid;
+    grid-template-columns: 1fr 2rem;
+    align-items: center;
+    caret-color: var(--caret-color);
+}
+
+.add-list > h4 {
+    font-weight: 500;
+    color: #949494;
+    cursor: pointer;
+}
+
+.add-icon {
+    font-size: 2rem;
+    cursor: pointer;
+    background: var(--caret-color);
+    color: var(--home-secondary);
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.add-input-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    margin-right: 15px;
+    gap: 1rem;
+}
+
+/* posts */
+
+.post-card {
+    background: var(--home-secondary);
+    border-radius: 10px;
+    padding: 1rem 1rem;
+}
+
+.post > h2 {
+    margin-bottom: 2rem;
+}
+
+.end-price {
+    display: flex;
+    justify-content: flex-end; /* Перемещаем содержимое вправо */
+}
+
+.end-price > h3 {
+    margin-top: 2rem;
+}
+
+/* end-posts */

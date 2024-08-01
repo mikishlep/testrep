@@ -1,10 +1,13 @@
 @import url(./dashboard/dashboard.css);
 @import url(./header/header.css);
 @import url(./sidebar/sidebar.css);
+@import url(./expenses/expenses.css);
 
 :root {
     --home-main: #262535;
     --home-secondary: #302e42;
+    --text-secondary: #949494;
+    --caret-color: #605d8d;
 }
 
 .icon {

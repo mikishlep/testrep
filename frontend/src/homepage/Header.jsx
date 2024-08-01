@@ -10,6 +10,9 @@ function Header() {
         </div>
         <div className="header-left">
             <BsSearch className='icon' />
+            <form action="" className='search-form'>
+              <input type="any" className='search-input' placeholder='Поиск' />
+            </form>
         </div>
         <div className="header-right">
             <BsFillBellFill className='icon' />

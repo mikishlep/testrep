@@ -5,6 +5,7 @@
     overflow-y: auto;
     transition: all .5s;
     -webkit-transition: all .5s;
+    user-select: none;
 }
 
 .sidebar-title {
@@ -35,18 +36,14 @@
     padding: 1.3rem;
     font-size: 1rem;
     transition: .2s;
+    color: #949494;
+    font-weight: 500;
 }
 
 .sidebar-list-item:hover {
     background-color: var(--home-main);
     transition: .2s;
     cursor: pointer;
-}
-
-.sidebar-list-item > a {
-    text-decoration: none;
-    color: #949494;
-    font-weight: 500;
 }
 
 .sidebar-responsive {
