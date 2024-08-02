@@ -4,22 +4,21 @@ import { FaPlus } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import Select from 'react-select';
 
-function Expenses() {
+function Expenses({ searchQuery }) { // Принятие searchQuery как пропса
   const [price, setPrice] = useState('');
   const [amount, setAmount] = useState('');
   const [total, setTotal] = useState(0);
-  const [users, setUsers] = useState({}); // Инициализируем как объект, где ключи - индексы проектов
+  const [users, setUsers] = useState({});
   const [name, setName] = useState('');
   const [sum, setSum] = useState('');
   const [postCards, setPostCards] = useState([]);
-
   const [editingIndex, setEditingIndex] = useState(null);
   const [editTitle, setEditTitle] = useState('');
   const [selectedProjectIndex, setSelectedProjectIndex] = useState(null);
 
   function calculation() {
     if (selectedProjectIndex === null) {
-      return; // Не добавляем, если проект не выбран
+      return;
     }
 
     const currentUsers = users[selectedProjectIndex] || [];
@@ -31,11 +30,9 @@ function Expenses() {
       [selectedProjectIndex]: updatedUsers
     });
 
-    // Обновление общего итога
     const total = Object.values(users).flat().reduce((total, user) => total + Number(user.sum), 0);
     setTotal(total);
 
-    // Очистка полей ввода
     setName('');
     setAmount('');
     setPrice('');
@@ -65,7 +62,7 @@ function Expenses() {
 
   const handleDelete = (index) => {
     if (selectedProjectIndex === null) {
-      return; // Не удаляем, если проект не выбран
+      return;
     }
 
     const currentUsers = users[selectedProjectIndex] || [];
@@ -76,7 +73,6 @@ function Expenses() {
       [selectedProjectIndex]: updatedUsers
     });
 
-    // Обновление общего итога
     const total = Object.values(users).flat().reduce((total, user) => total + Number(user.sum), 0);
     setTotal(total);
   };
@@ -113,6 +109,11 @@ function Expenses() {
     value: index,
     label: postCard.title
   }));
+
+  // Фильтрация проектов по запросу поиска
+  const filteredPostCards = postCards.filter(postCard =>
+    postCard.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const styles = {
     control: (provided, state) => ({
@@ -206,7 +207,7 @@ function Expenses() {
           </form>
           <button className='btn-success' type='button' onClick={calculation}><FaPlus className='add-icon' /></button>
         </div>
-        {postCards.map((postCard, index) => (
+        {filteredPostCards.map((postCard, index) => (
           <div key={index} className="post-card">
             <div className="post">
               {editingIndex === index ? (

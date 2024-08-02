@@ -29,8 +29,8 @@ function Sidebar({setSelectedPage}) {
         <li className="sidebar-list-item" onClick={() => setSelectedPage('inventory')}>
             <BsListCheck className='icon' /> Инвентарь
         </li>
-        <li className="sidebar-list-item">
-            <BsMenuButtonWideFill className='icon' /> Reports
+        <li className="sidebar-list-item" onClick={() => setSelectedPage('documentation')}>
+            <BsMenuButtonWideFill className='icon' /> Документация
         </li>
         <li className="sidebar-list-item" onClick={() => setSelectedPage('settings')}>
             <BsFillGearFill className='icon' /> Настройки

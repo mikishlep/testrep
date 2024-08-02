@@ -1,0 +1,7 @@
+.documentation {
+    padding: 1.3rem 4rem;
+}
+
+.documentation > li {
+    margin-top: .5rem;
+}

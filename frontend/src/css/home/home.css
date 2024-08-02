@@ -2,6 +2,7 @@
 @import url(./header/header.css);
 @import url(./sidebar/sidebar.css);
 @import url(./expenses/expenses.css);
+@import url(./documentation/documentation.css);
 
 :root {
     --home-main: #262535;
