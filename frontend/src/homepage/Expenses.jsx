@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import '../css/home/home.css';
-import { FaPlus } from "react-icons/fa6";
-import { FaTrash } from "react-icons/fa";
+import { FaPlus, FaTrash } from 'react-icons/fa';
 import Select from 'react-select';
 
-function Expenses({ searchQuery }) { // Принятие searchQuery как пропса
+function Expenses({ searchQuery }) {
   const [price, setPrice] = useState('');
   const [amount, setAmount] = useState('');
   const [total, setTotal] = useState(0);
@@ -77,6 +76,33 @@ function Expenses({ searchQuery }) { // Принятие searchQuery как пр
     setTotal(total);
   };
 
+  const handleDeletePostCard = (index) => {
+    if (window.confirm("Удалить проект?")) {
+      // Remove the selected project
+      const updatedPostCards = postCards.filter((_, i) => i !== index);
+      setPostCards(updatedPostCards);
+
+      // Remove associated users data
+      const updatedUsers = { ...users };
+      delete updatedUsers[index];
+      const newUsers = {};
+      Object.keys(updatedUsers).forEach(key => {
+        const newIndex = parseInt(key) < index ? parseInt(key) : parseInt(key) - 1;
+        newUsers[newIndex] = updatedUsers[key];
+      });
+      setUsers(newUsers);
+
+      // Adjust selected project index
+      if (selectedProjectIndex === index) {
+        setSelectedProjectIndex(null);
+      } else if (selectedProjectIndex > index) {
+        setSelectedProjectIndex(selectedProjectIndex - 1);
+      }
+    } else {
+      return;
+    }
+  };
+
   const handleTitleClick = (index) => {
     setEditingIndex(index);
     setEditTitle(postCards[index].title);
@@ -105,6 +131,7 @@ function Expenses({ searchQuery }) { // Принятие searchQuery как пр
     }
   };
 
+  // Generate options with updated indices
   const options = postCards.map((postCard, index) => ({
     value: index,
     label: postCard.title
@@ -253,6 +280,9 @@ function Expenses({ searchQuery }) { // Принятие searchQuery как пр
             <span className="end-price">
               <h3>Общие затраты: {(users[index] || []).reduce((total, user) => total + Number(user.sum), 0)}</h3>
             </span>
+            <button onClick={() => handleDeletePostCard(index)} className="btn-delete-postcard">
+              <FaTrash />
+            </button>
           </div>
         ))}
         <div className="add-project">
