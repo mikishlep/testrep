@@ -39,25 +39,27 @@ function Inventory({ searchQuery }) {
     card.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const increaseCount = (index) => {
-    const updatedCards = [...cards];
-    updatedCards[index] = { ...updatedCards[index], count: updatedCards[index].count + 1 };
+  const increaseCount = (id) => {
+    const updatedCards = cards.map(card => 
+      card.id === id ? { ...card, count: card.count + 1 } : card
+    );
     setCards(updatedCards);
   };
   
-  const decreaseCount = (index) => {
-    const updatedCards = [...cards];
-    const currentCount = updatedCards[index].count;
-    const newCount = currentCount - 1;
+  const decreaseCount = (id) => {
+    const updatedCards = cards.map(card => {
+      if (card.id === id) {
+        const newCount = card.count - 1;
+        if (newCount < 0) {
+          // Удаление карточки, если count становится меньше 0
+          return null; // Возвращаем null, чтобы потом отфильтровать её
+        }
+        return { ...card, count: newCount };
+      }
+      return card;
+    }).filter(card => card !== null); // Удаление всех null значений из массива
   
-    if (newCount < 0) {
-      // Удаление карточки, если count становится меньше 0
-      setCards(updatedCards.filter((_, i) => i !== index));
-    } else {
-      // Уменьшение count
-      updatedCards[index] = { ...updatedCards[index], count: newCount };
-      setCards(updatedCards);
-    }
+    setCards(updatedCards);
   };
   
 
@@ -84,8 +86,8 @@ function Inventory({ searchQuery }) {
             </div>
             <div className="inv-count">
               <h1>{card.count}</h1>
-              <CiSquareMinus className='inv-button' onClick={() => decreaseCount(index)} />
-              <CiSquarePlus className='inv-button' onClick={() => increaseCount(index)} />
+              <CiSquareMinus className='inv-button' onClick={() => decreaseCount(card.id)} />
+              <CiSquarePlus className='inv-button' onClick={() => increaseCount(card.id)} />
             </div>
           </div>
         ))}
