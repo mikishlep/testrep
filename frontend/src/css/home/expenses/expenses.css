@@ -2,7 +2,7 @@
     background: var(--home-secondary);
     padding: 1rem 1rem;
     border-radius: 10px;
-    margin: 1rem 0;
+    margin-bottom: 1rem;
     display: grid;
     grid-template-columns: 1fr 2rem;
     align-items: center;
@@ -26,7 +26,7 @@
 
 .add-input-form {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     margin-right: 15px;
     gap: 1rem;
 }
@@ -50,6 +50,47 @@
 
 .end-price > h3 {
     margin-top: 2rem;
+}
+
+.expense-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 5rem;
+}
+
+.expense-table th, .expense-table td {
+    border: 3px solid var(--caret-color); /* Линии между ячейками */
+    padding: .5rem; /* Отступ внутри ячейки */
+}
+
+.btn-delete {
+    float: right; /* Выравнивание кнопки вправо */
+}
+
+.add-project > h4 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.add-project {
+    text-align: center;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+.post > input {
+    border: none;
+    margin-bottom: 2rem;
+    padding: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border-radius: 0;
+    width: 100%;
+}
+
+.post-card {
+    margin-top: 1rem;
 }
 
 /* end-posts */

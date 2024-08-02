@@ -19,7 +19,7 @@ function Home() {
         return <Settings />
       case 'inventory':
         return <Inventory />
-      default:
+      case 'dashboard':
         return <Dashboard />
     }
   };

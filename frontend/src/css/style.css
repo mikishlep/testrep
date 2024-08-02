@@ -3,10 +3,6 @@
 @import url(btn.css);
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
-:root {
-    --main-color: #00b59f;
-}
-
 main {
     height: 100vh;
     background: linear-gradient(to bottom right, var(--home-main), #7371a2);

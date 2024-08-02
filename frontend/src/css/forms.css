@@ -5,6 +5,27 @@ input {
     border-radius: 10px;
 }
 
+::placeholder {
+    color: var(--text-secondary);
+}
+
+select {
+    border: 3px solid #605d8d;
+    padding: .7rem 2rem;
+    font-size: 1rem;
+    border-radius: 10px;
+}
+
+option {
+    background-color: var(--caret-color);
+    color: #000;
+    height: .5rem;
+}
+
+select:focus {
+    outline: none;
+}
+
 .errroCode {
     margin-top: .5rem;
     width: 100%;
