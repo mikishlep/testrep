@@ -79,9 +79,8 @@
     cursor: pointer;
 }
 
-.post > input {
+.post-header > input {
     border: none;
-    margin-bottom: 2rem;
     padding: 0;
     font-size: 1.5rem;
     font-weight: 700;
@@ -91,6 +90,12 @@
 
 .post-card {
     margin-top: 1rem;
+}
+
+.post-header {
+    display: grid;
+    grid-template-columns: 1fr 1rem;
+    margin-bottom: 2rem;
 }
 
 /* end-posts */

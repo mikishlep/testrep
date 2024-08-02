@@ -17,14 +17,8 @@ function Sidebar({setSelectedPage}) {
         <li className="sidebar-list-item" onClick={() => setSelectedPage('dashboard')}>
             <BsGrid1X2Fill className='icon' /> Статистика
         </li>
-        <li className="sidebar-list-item">
-            <BsFillArchiveFill className='icon' /> Products
-        </li>
         <li className="sidebar-list-item" onClick={() => setSelectedPage('expenses')}>
             <BsFillGrid3X3GapFill className='icon' /> Затраты
-        </li>
-        <li className="sidebar-list-item">
-            <BsPeopleFill className='icon' /> Customers
         </li>
         <li className="sidebar-list-item" onClick={() => setSelectedPage('inventory')}>
             <BsListCheck className='icon' /> Инвентарь

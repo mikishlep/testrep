@@ -235,18 +235,23 @@ function Expenses({ searchQuery }) {
         {filteredPostCards.map((postCard, index) => (
           <div key={index} className="post-card">
             <div className="post">
-              {editingIndex === index ? (
-                <input
-                  type="text"
-                  value={editTitle}
-                  onChange={handleTitleChange}
-                  onBlur={handleTitleBlur}
-                  autoFocus
-                  className='edit-title-input'
-                />
-              ) : (
-                <h2 onClick={() => handleTitleClick(index)}>{postCard.title}</h2>
-              )}
+              <div className="post-header">
+                {editingIndex === index ? (
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={handleTitleChange}
+                    onBlur={handleTitleBlur}
+                    autoFocus
+                    className='edit-title-input'
+                  />
+                ) : (
+                  <h2 onClick={() => handleTitleClick(index)}>{postCard.title}</h2>
+                )}
+                <button onClick={() => handleDeletePostCard(index)} className="btn-delete-postcard">
+                  <FaTimes />
+                </button>
+              </div>
               <div className="post__content">
                 <table className="expense-table">
                   <thead>
@@ -278,9 +283,6 @@ function Expenses({ searchQuery }) {
             <span className="end-price">
               <h3>Общие затраты: {(users[index] || []).reduce((total, user) => total + Number(user.sum), 0)}</h3>
             </span>
-            <button onClick={() => handleDeletePostCard(index)} className="btn-delete-postcard">
-              <FaTimes />
-            </button>
           </div>
         ))}
         <div className="add-project">
