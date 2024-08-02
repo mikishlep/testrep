@@ -2,13 +2,16 @@ import React, { useState } from 'react'; // Импортируем useState
 import { BsFillBellFill, BsFillEnvelopeFill, BsPersonCircle, BsSearch, BsJustify } from 'react-icons/bs';
 import '../css/home/home.css';
 
-function Header({ onSearch }) {
-  const [query, setQuery] = useState(''); // Добавляем состояние query
+function Header({ onSearch, currentPage }) {
+  const [query, setQuery] = useState(''); // Состояние для запроса
 
   const handleSearchChange = (e) => {
     const newQuery = e.target.value;
-    setQuery(newQuery); // Обновляем состояние query
-    onSearch(newQuery); // Вызываем функцию обратного вызова с новым значением
+    setQuery(newQuery); // Обновляем состояние
+    // В зависимости от текущей страницы, вызываем соответствующую функцию поиска
+    if (currentPage === 'inventory' || currentPage === 'expenses') {
+      onSearch(newQuery);
+    }
   };
 
   return (
@@ -18,12 +21,12 @@ function Header({ onSearch }) {
       </div>
       <div className="header-left">
         <BsSearch className='icon' />
-        <form action="" className='search-form'>
+        <form className='search-form'>
           <input 
             type="text" 
             className='search-input' 
             placeholder='Поиск' 
-            value={query} // Добавляем значение состояния query
+            value={query} 
             onChange={handleSearchChange} // Устанавливаем обработчик изменения
           />
         </form>
@@ -34,7 +37,7 @@ function Header({ onSearch }) {
         <BsPersonCircle className='icon' />
       </div>
     </header>
-  )
+  );
 }
 
 export default Header;

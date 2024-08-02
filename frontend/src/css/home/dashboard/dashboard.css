@@ -83,19 +83,3 @@
     height: 37.4rem;
     user-select: none;
 }
-
-/* calculator */
-
-/* .calculator {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1.7rem 1rem;
-    border-radius: 10px;
-    height: 15.7rem;
-    margin-top: 3.7rem;
-    background-color: var(--home-secondary);
-    box-shadow: 0px 0px 21px 5px rgba(0, 0, 0, .1);
-} */
-
-/* calculator-end */

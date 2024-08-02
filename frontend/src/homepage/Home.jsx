@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import '../css/home/home.css';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Dashboard from './Dashboard';
 import Expenses from './Expenses';
-import Settings from "./settings"
+import Settings from "./settings";
 import Inventory from './Inventory';
 import Documentation from './Documentation';
 
 function Home() {
-
   const [selectedPage, setSelectedPage] = useState(() => {
     const savedPage = localStorage.getItem('selectedPage');
     return savedPage ? savedPage : 'dashboard';
   });
 
   useEffect(() => {
-    localStorage.setItem('selectedPage', selectedPage)
+    localStorage.setItem('selectedPage', selectedPage);
   }, [selectedPage]);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -26,13 +25,13 @@ function Home() {
       case 'expenses':
         return <Expenses searchQuery={searchQuery} />;
       case 'settings':
-        return <Settings />
+        return <Settings />;
       case 'inventory':
-        return <Inventory />
+        return <Inventory searchQuery={searchQuery} />;
       case 'dashboard':
-        return <Dashboard />
+        return <Dashboard />;
       case 'documentation':
-        return <Documentation />
+        return <Documentation />;
       default:
         return <Dashboard />;
     }
@@ -40,11 +39,11 @@ function Home() {
 
   return (
     <div className="grid-container">
-      <Header onSearch={setSearchQuery} />
+      <Header onSearch={setSearchQuery} currentPage={selectedPage} />
       <Sidebar setSelectedPage={setSelectedPage} />
       {renderContent()}
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
