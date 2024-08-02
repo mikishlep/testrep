@@ -59,30 +59,30 @@ function Expenses({ searchQuery }) {
     setSum(newTotal);
   };
 
-  const handleDelete = (index) => {
-    if (selectedProjectIndex === null) {
+  const handleDelete = (projectIndex, userIndex) => {
+    if (window.confirm("Удалить строку?")) {
+      const currentUsers = users[projectIndex] || [];
+      const updatedUsers = currentUsers.filter((_, i) => i !== userIndex);
+
+      setUsers({
+        ...users,
+        [projectIndex]: updatedUsers
+      });
+
+      const total = Object.values(users).flat().reduce((total, user) => total + Number(user.sum), 0);
+      setTotal(total);
+    } else {
       return;
     }
-
-    const currentUsers = users[selectedProjectIndex] || [];
-    const updatedUsers = currentUsers.filter((_, i) => i !== index);
-
-    setUsers({
-      ...users,
-      [selectedProjectIndex]: updatedUsers
-    });
-
-    const total = Object.values(users).flat().reduce((total, user) => total + Number(user.sum), 0);
-    setTotal(total);
   };
 
   const handleDeletePostCard = (index) => {
     if (window.confirm("Удалить проект?")) {
-      // Remove the selected project
+      // Удаляем проект
       const updatedPostCards = postCards.filter((_, i) => i !== index);
       setPostCards(updatedPostCards);
 
-      // Remove associated users data
+      // Удаляем связанные данные о пользователях
       const updatedUsers = { ...users };
       delete updatedUsers[index];
       const newUsers = {};
@@ -92,14 +92,12 @@ function Expenses({ searchQuery }) {
       });
       setUsers(newUsers);
 
-      // Adjust selected project index
+      // Обновляем индекс выбранного проекта
       if (selectedProjectIndex === index) {
         setSelectedProjectIndex(null);
       } else if (selectedProjectIndex > index) {
         setSelectedProjectIndex(selectedProjectIndex - 1);
       }
-    } else {
-      return;
     }
   };
 
@@ -131,7 +129,7 @@ function Expenses({ searchQuery }) {
     }
   };
 
-  // Generate options with updated indices
+  // Генерируем опции с обновленными индексами
   const options = postCards.map((postCard, index) => ({
     value: index,
     label: postCard.title
@@ -260,14 +258,14 @@ function Expenses({ searchQuery }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {(users[index] || []).map((user, idx) => (
-                      <tr key={idx}>
+                    {(users[index] || []).map((user, userIdx) => (
+                      <tr key={userIdx}>
                         <td>{user.name}</td>
                         <td>{user.amount}</td>
                         <td>{user.price}</td>
                         <td>
                           {user.sum}
-                          <button onClick={() => handleDelete(idx)} className="btn-delete">
+                          <button onClick={() => handleDelete(index, userIdx)} className="btn-delete">
                             <FaTrash />
                           </button>
                         </td>
