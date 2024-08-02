@@ -37,3 +37,22 @@
     transform: scale(1.04);
     transition: all .5s;
 }
+
+.edit-title-input {
+    border: none;
+    padding: 0;
+    font-size: 1.17em;
+    font-weight: 700;
+    width: 100%;
+}
+
+.inv-count {
+    display: grid;
+    grid-template-columns: 1fr 2rem 2rem;
+    align-items: center;
+}
+
+.inv-button {
+    font-size: 2rem;
+    cursor: pointer;
+}
