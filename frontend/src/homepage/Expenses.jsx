@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '../css/home/home.css';
-import { FaPlus, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaTimes } from 'react-icons/fa';
 import Select from 'react-select';
 
 function Expenses({ searchQuery }) {
@@ -279,7 +279,7 @@ function Expenses({ searchQuery }) {
               <h3>Общие затраты: {(users[index] || []).reduce((total, user) => total + Number(user.sum), 0)}</h3>
             </span>
             <button onClick={() => handleDeletePostCard(index)} className="btn-delete-postcard">
-              <FaTrash />
+              <FaTimes />
             </button>
           </div>
         ))}
