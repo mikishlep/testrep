@@ -117,7 +117,7 @@ app.put('/cards/:id', authenticateToken, (req, res) => {
     const { title, count } = req.body;
     const userId = req.user.userId;
 
-    // Создайте запрос только с теми полями, которые не являются `undefined` или `null`
+    // Проверка и установка значений только для не-null/undefined полей
     const fields = [];
     const values = [];
 
@@ -127,6 +127,10 @@ app.put('/cards/:id', authenticateToken, (req, res) => {
     }
 
     if (count !== undefined) {
+        // Установка счётчика только если он >= 0
+        if (count < 0) {
+            return res.status(400).json("Invalid count value");
+        }
         fields.push('count = ?');
         values.push(count);
     }
@@ -147,13 +151,26 @@ app.put('/cards/:id', authenticateToken, (req, res) => {
     });
 });
 
+// Удаление карточек с отрицательным счётчиком
 app.delete('/cards/:id', authenticateToken, (req, res) => {
     const { id } = req.params;
     const userId = req.user.userId;
-    const sql = 'DELETE FROM user_cards WHERE id = ? AND user_id = ?';
-    db.query(sql, [id, userId], (err) => {
+
+    const checkSql = 'SELECT count FROM user_cards WHERE id = ? AND user_id = ?';
+    db.query(checkSql, [id, userId], (err, results) => {
         if (err) return res.status(500).json("Error");
-        res.json('Success');
+        if (results.length === 0) return res.status(404).json("Card not found");
+
+        const card = results[0];
+        if (card.count <= 0) {
+            const deleteSql = 'DELETE FROM user_cards WHERE id = ? AND user_id = ?';
+            db.query(deleteSql, [id, userId], (err) => {
+                if (err) return res.status(500).json("Error");
+                res.json('Success');
+            });
+        } else {
+            res.status(400).json("Card count is not negative or zero");
+        }
     });
 });
 
