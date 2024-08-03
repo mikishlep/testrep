@@ -35,7 +35,10 @@ function Signup() {
                         alert('Ошибка регистрации');
                     }
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    console.error('Error from server:', err);
+                    alert('Ошибка сервера при регистрации');
+                });
         }
     };
 
@@ -80,7 +83,7 @@ function Signup() {
                             {errors.password && <span className="errroCode">{errors.password}</span>}
                         </div>
                         <div className="form--el">
-                            <button type="submit" className="hero-btn">Войти</button>
+                            <button type="submit" className="hero-btn">Зарегистрироваться</button>
                         </div>
                         <Link to="/" style={{ textDecoration: 'none' }}>Уже с нами?</Link>
                     </form>
