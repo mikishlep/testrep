@@ -4,7 +4,6 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import Dashboard from './Dashboard';
 import Expenses from './Expenses';
-import Settings from "./settings";
 import Inventory from './Inventory';
 import Documentation from './Documentation';
 
@@ -24,8 +23,6 @@ function Home() {
     switch (selectedPage) {
       case 'expenses':
         return <Expenses searchQuery={searchQuery} />;
-      case 'settings':
-        return <Settings />;
       case 'inventory':
         return <Inventory searchQuery={searchQuery} />;
       case 'dashboard':

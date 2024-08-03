@@ -46,8 +46,28 @@
     cursor: pointer;
 }
 
+.sidebar-no-hover {
+    padding: 1.3rem;
+    font-size: 1rem;
+    transition: .2s;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
 .sidebar-responsive {
     display: inline !important;
     position: absolute;
     z-index: 12 !important;
+}
+
+.links {
+    display: grid;
+    grid-template-columns: repeat(2, 1rem);
+    gap: 2rem;
+    color: #fff;
+    font-size: 2rem;
+}
+
+.no-hover:hover {
+    background-color: var(--home-main) !important;
 }

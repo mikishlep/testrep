@@ -79,7 +79,58 @@
     grid-template-columns: 1fr;
     grid-template-rows: repeat(2, 1fr);
     gap: .5rem;
-    margin-top: 3.7rem;
+    margin-top: 2.9rem;
     height: 37.4rem;
     user-select: none;
+}
+
+.graphics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.paint-graphic {
+    justify-self: center;
+    background: var(--home-secondary);
+    padding: 1.5rem 2.5rem;
+    border-radius: 20px;
+    margin-top: 1.5rem;
+}
+
+.paint-graphic > h3 {
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.graphic-config {
+    margin: 1rem;
+}
+
+.paint-graphic-left {
+    justify-self: center;
+    background: var(--home-secondary);
+    padding: 1.5rem 11.875rem;
+    border-radius: 20px;
+    margin-top: 1.5rem;
+}
+
+.paint-graphic-left > h3 {
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.edit-button {
+    color: transparent;
+    background: none;
+    transition: .2s;
+    margin-left: 4rem;
+}
+
+.edit-button:hover {
+    color: #fff;
+    transition: .2s;
+    background: var(--caret-color);
+    padding: .4rem .5rem;
+    font-weight: 700;
+    border-radius: 7px;
 }
