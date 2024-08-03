@@ -100,25 +100,38 @@ function Inventory({ searchQuery }) {
   const decreaseCount = async (id) => {
     try {
         const updatedCard = cards.find(card => card.id === id);
-        if (updatedCard && updatedCard.count > 0) {
-            updatedCard.count -= 1;
-            console.log('Decreasing count for card:', updatedCard); // Логирование перед запросом
-            const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:8081/cards/${id}`, { count: updatedCard.count }, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            console.log('Updated card count:', updatedCard); // Логирование после запроса
-            const updatedCards = cards.map(card =>
-                card.id === id ? updatedCard : card
-            );
-            setCards(updatedCards);
+        if (updatedCard) {
+            if (updatedCard.count > 0) {
+                // Уменьшить счётчик
+                updatedCard.count -= 1;
+                console.log('Decreasing count for card:', updatedCard); // Логирование перед запросом
+                const token = localStorage.getItem('token');
+                await axios.put(`http://localhost:8081/cards/${id}`, { count: updatedCard.count }, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                console.log('Updated card count:', updatedCard); // Логирование после запроса
+                const updatedCards = cards.map(card =>
+                    card.id === id ? updatedCard : card
+                );
+                setCards(updatedCards);
+            } else if (updatedCard.count === 0) {
+                // Удаление карточки
+                console.log('Removing card with id:', id); // Логирование перед запросом
+                const token = localStorage.getItem('token');
+                await axios.delete(`http://localhost:8081/cards/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                setCards(cards.filter(card => card.id !== id));
+            }
         }
     } catch (error) {
         console.error('Error decreasing count:', error);
     }
-  };
+};
 
   const filteredCards = cards.filter(card =>
     card.title.toLowerCase().includes(searchQuery.toLowerCase())
