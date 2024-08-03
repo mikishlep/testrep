@@ -29,7 +29,7 @@ db.connect((err) => {
 
 // Обработка POST-запросов на /signup
 app.post('/signup', (req, res) => {
-    const sql = "INSERT INTO logingrastone (`name`, `login`, `password`) VALUES (?)";
+    const sql = "INSERT INTO login (`name`, `login`, `password`) VALUES (?)";
     const values = [
         req.body.realname,
         req.body.username,
@@ -45,7 +45,7 @@ app.post('/signup', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    const sql = "SELECT * FROM logingrastone WHERE `login` = ? AND `password` =  ?";
+    const sql = "SELECT * FROM login WHERE `login` = ? AND `password` =  ?";
     console.log('Received login request:', req.body);
 
     db.query(sql, [req.body.username, req.body.password], (err, data) => {
