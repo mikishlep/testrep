@@ -33,7 +33,7 @@ app.post('/signup', async (req, res) => {
         const { realname, username, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const sql = "INSERT INTO login (`name`, `login`, `password`) VALUES (?, ?, ?)";
+        const sql = "INSERT INTO login (name, login, password) VALUES (?, ?, ?)";
         const values = [realname, username, hashedPassword];
 
         db.query(sql, values, (err) => {
@@ -52,7 +52,7 @@ app.post('/signup', async (req, res) => {
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
-    const sql = "SELECT * FROM login WHERE `login` = ?";
+    const sql = "SELECT * FROM login WHERE login = ?";
     db.query(sql, [username], async (err, results) => {
         if (err) {
             console.error('Ошибка выполнения запроса:', err);
