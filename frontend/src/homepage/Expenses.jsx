@@ -1,42 +1,87 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/home/home.css';
 import { FaPlus, FaTrash, FaTimes } from 'react-icons/fa';
 import Select from 'react-select';
+import axios from 'axios';
 
 function Expenses({ searchQuery }) {
   const [price, setPrice] = useState('');
   const [amount, setAmount] = useState('');
   const [total, setTotal] = useState(0);
-  const [users, setUsers] = useState({});
+  const [projects, setProjects] = useState([]);
   const [name, setName] = useState('');
   const [sum, setSum] = useState('');
-  const [postCards, setPostCards] = useState([]);
+  const [expenses, setExpenses] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editTitle, setEditTitle] = useState('');
   const [selectedProjectIndex, setSelectedProjectIndex] = useState(null);
 
-  function calculation() {
-    if (selectedProjectIndex === null) {
-      return;
-    }
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8081/projects', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        setProjects(response.data);
+      } catch (error) {
+        console.error('Ошибка при получении проектов:', error);
+      }
+    };
 
-    const currentUsers = users[selectedProjectIndex] || [];
-    const newUser = { name, amount, price, sum };
-    const updatedUsers = [...currentUsers, newUser];
+    fetchProjects();
+  }, []);
 
-    setUsers({
-      ...users,
-      [selectedProjectIndex]: updatedUsers
-    });
+  useEffect(() => {
+    if (selectedProjectIndex === null) return;
 
-    const total = Object.values(users).flat().reduce((total, user) => total + Number(user.sum), 0);
-    setTotal(total);
+    const fetchExpenses = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:8081/expenses/${selectedProjectIndex}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        setExpenses(response.data);
+        const total = response.data.reduce((total, expense) => total + Number(expense.sum), 0);
+        setTotal(total);
+      } catch (error) {
+        console.error('Ошибка при получении расходов:', error);
+      }
+    };
+
+    fetchExpenses();
+  }, [selectedProjectIndex]);
+
+  const calculation = () => {
+    if (selectedProjectIndex === null) return;
+
+    const newExpense = { name, amount, price, sum };
+    const updatedExpenses = [...expenses, newExpense];
+
+    setExpenses(updatedExpenses);
+    setTotal(updatedExpenses.reduce((total, expense) => total + Number(expense.sum), 0));
+
+    const token = localStorage.getItem('token');
+    axios.post('http://localhost:8081/expenses', { 
+      projectId: selectedProjectIndex, 
+      name, 
+      amount, 
+      price, 
+      sum 
+    }, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .catch(error => console.error('Ошибка при добавлении расхода:', error));
 
     setName('');
     setAmount('');
     setPrice('');
     setSum('');
-  }
+  };
 
   const handlePriceChange = (e) => {
     const newPrice = parseFloat(e.target.value);
@@ -59,59 +104,52 @@ function Expenses({ searchQuery }) {
     setSum(newTotal);
   };
 
-  const handleDelete = (projectIndex, userIndex) => {
-    if (window.confirm("Удалить строку?")) {
-      const currentUsers = users[projectIndex] || [];
-      const updatedUsers = currentUsers.filter((_, i) => i !== userIndex);
+  const handleDelete = (expenseId) => {
+    if (window.confirm("Удалить расход?")) {
+      setExpenses(expenses.filter(expense => expense.id !== expenseId));
+      setTotal(total - expenses.find(expense => expense.id === expenseId).sum);
 
-      setUsers({
-        ...users,
-        [projectIndex]: updatedUsers
-      });
-
-      const total = Object.values(users).flat().reduce((total, user) => total + Number(user.sum), 0);
-      setTotal(total);
-    } else {
-      return;
+      const token = localStorage.getItem('token');
+      axios.delete(`http://localhost:8081/expenses/${expenseId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      }).catch(error => console.error('Ошибка при удалении расхода:', error));
     }
   };
 
-  const handleDeletePostCard = (index) => {
+  const handleDeleteProject = (index) => {
     if (window.confirm("Удалить проект?")) {
-      // Удаляем проект
-      const updatedPostCards = postCards.filter((_, i) => i !== index);
-      setPostCards(updatedPostCards);
+      const deletedProject = projects[index];
+      setProjects(projects.filter((_, i) => i !== index));
+      setExpenses(expenses.filter(expense => expense.project_id !== deletedProject.id));
+      setSelectedProjectIndex(null);
 
-      // Удаляем связанные данные о пользователях
-      const updatedUsers = { ...users };
-      delete updatedUsers[index];
-      const newUsers = {};
-      Object.keys(updatedUsers).forEach(key => {
-        const newIndex = parseInt(key) < index ? parseInt(key) : parseInt(key) - 1;
-        newUsers[newIndex] = updatedUsers[key];
-      });
-      setUsers(newUsers);
-
-      // Обновляем индекс выбранного проекта
-      if (selectedProjectIndex === index) {
-        setSelectedProjectIndex(null);
-      } else if (selectedProjectIndex > index) {
-        setSelectedProjectIndex(selectedProjectIndex - 1);
-      }
+      const token = localStorage.getItem('token');
+      axios.delete(`http://localhost:8081/projects/${deletedProject.id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      }).catch(error => console.error('Ошибка при удалении проекта:', error));
     }
   };
 
   const handleTitleClick = (index) => {
     setEditingIndex(index);
-    setEditTitle(postCards[index].title);
+    setEditTitle(projects[index].title);
   };
 
-  const handleTitleBlur = () => {
+  const handleTitleBlur = async () => {
     if (editingIndex !== null) {
-      const updatedPostCards = [...postCards];
-      updatedPostCards[editingIndex] = { ...updatedPostCards[editingIndex], title: editTitle };
-      setPostCards(updatedPostCards);
-      setEditingIndex(null);
+      const updatedProject = { ...projects[editingIndex], title: editTitle };
+      try {
+        const token = localStorage.getItem('token');
+        await axios.put(`http://localhost:8081/projects/${updatedProject.id}`, updatedProject, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const updatedProjects = [...projects];
+        updatedProjects[editingIndex] = updatedProject;
+        setProjects(updatedProjects);
+        setEditingIndex(null);
+      } catch (error) {
+        console.error('Ошибка при обновлении проекта:', error);
+      }
     }
   };
 
@@ -119,8 +157,18 @@ function Expenses({ searchQuery }) {
     setEditTitle(e.target.value);
   };
 
-  const handleAddPostCard = () => {
-    setPostCards([...postCards, { title: 'Новый проект' }]);
+  const handleAddProject = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const newProject = { title: 'Новый проект' };
+      const response = await axios.post('http://localhost:8081/projects', newProject, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const addedProject = { ...newProject, id: response.data.id };
+      setProjects([...projects, addedProject]);
+    } catch (error) {
+      console.error('Ошибка при добавлении проекта:', error);
+    }
   };
 
   const handleSelectChange = (selectedOption) => {
@@ -130,14 +178,14 @@ function Expenses({ searchQuery }) {
   };
 
   // Генерируем опции с обновленными индексами
-  const options = postCards.map((postCard, index) => ({
-    value: index,
-    label: postCard.title
+  const options = projects.map((project, index) => ({
+    value: project.id,
+    label: project.title
   }));
 
   // Фильтрация проектов по запросу поиска
-  const filteredPostCards = postCards.filter(postCard =>
-    postCard.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProjects = projects.filter(project =>
+    project.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const styles = {
@@ -232,7 +280,7 @@ function Expenses({ searchQuery }) {
           </form>
           <button className='btn-success' type='button' onClick={calculation}><FaPlus className='add-icon' /></button>
         </div>
-        {filteredPostCards.map((postCard, index) => (
+        {filteredProjects.map((project, index) => (
           <div key={index} className="post-card">
             <div className="post">
               <div className="post-header">
@@ -246,9 +294,9 @@ function Expenses({ searchQuery }) {
                     className='edit-title-input'
                   />
                 ) : (
-                  <h2 onClick={() => handleTitleClick(index)}>{postCard.title}</h2>
+                  <h2 onClick={() => handleTitleClick(index)}>{project.title}</h2>
                 )}
-                <button onClick={() => handleDeletePostCard(index)} className="btn-delete-postcard">
+                <button onClick={() => handleDeleteProject(index)} className="btn-delete-postcard">
                   <FaTimes />
                 </button>
               </div>
@@ -263,14 +311,14 @@ function Expenses({ searchQuery }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {(users[index] || []).map((user, userIdx) => (
-                      <tr key={userIdx}>
-                        <td>{user.name}</td>
-                        <td>{user.amount}</td>
-                        <td>{user.price}</td>
+                    {expenses.filter(expense => expense.project_id === project.id).map((expense, expenseIdx) => (
+                      <tr key={expenseIdx}>
+                        <td>{expense.name}</td>
+                        <td>{expense.amount}</td>
+                        <td>{expense.price}</td>
                         <td>
-                          {user.sum}
-                          <button onClick={() => handleDelete(index, userIdx)} className="btn-delete">
+                          {expense.sum}
+                          <button onClick={() => handleDelete(expense.id)} className="btn-delete">
                             <FaTrash />
                           </button>
                         </td>
@@ -279,14 +327,14 @@ function Expenses({ searchQuery }) {
                   </tbody>
                 </table>
               </div>
+              <span className="end-price">
+                <h3>Общие затраты: {expenses.filter(expense => expense.project_id === project.id).reduce((total, expense) => total + Number(expense.sum), 0)}</h3>
+              </span>
             </div>
-            <span className="end-price">
-              <h3>Общие затраты: {(users[index] || []).reduce((total, user) => total + Number(user.sum), 0)}</h3>
-            </span>
           </div>
         ))}
         <div className="add-project">
-          <h4 onClick={handleAddPostCard}>Добавить проект...</h4>
+          <h4 onClick={handleAddProject}>Добавить проект...</h4>
         </div>
       </div>
     </section>

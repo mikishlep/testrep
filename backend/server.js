@@ -174,6 +174,119 @@ app.delete('/cards/:id', authenticateToken, (req, res) => {
     });
 });
 
+// Создание нового проекта
+app.post('/projects', authenticateToken, (req, res) => {
+    const { title } = req.body;
+    const userId = req.user.userId;
+    const sql = 'INSERT INTO projects (title, user_id) VALUES (?, ?)';
+    db.query(sql, [title, userId], (err, result) => {
+        if (err) return res.status(500).json("Error");
+        res.json({ id: result.insertId });
+    });
+});
+
+// Получение проектов пользователя
+app.get('/projects', authenticateToken, (req, res) => {
+    const userId = req.user.userId;
+    const sql = 'SELECT * FROM projects WHERE user_id = ?';
+    db.query(sql, [userId], (err, results) => {
+        if (err) return res.status(500).json("Error");
+        res.json(results);
+    });
+});
+
+// Обновление проекта
+app.put('/projects/:id', authenticateToken, (req, res) => {
+    const { id } = req.params;
+    const { title } = req.body;
+    const sql = 'UPDATE projects SET title = ? WHERE id = ? AND user_id = ?';
+    db.query(sql, [title, id, req.user.userId], (err) => {
+        if (err) return res.status(500).json("Error");
+        res.json('Success');
+    });
+});
+
+// Удаление проекта
+app.delete('/projects/:id', authenticateToken, (req, res) => {
+    const { id } = req.params;
+    const sql = 'DELETE FROM projects WHERE id = ? AND user_id = ?';
+    db.query(sql, [id, req.user.userId], (err) => {
+        if (err) return res.status(500).json("Error");
+        res.json('Success');
+    });
+});
+
+// Добавление расхода
+app.post('/expenses', authenticateToken, (req, res) => {
+    const { projectId, name, amount, price, sum } = req.body;
+    const sql = 'INSERT INTO expenses (project_id, name, amount, price, sum) VALUES (?, ?, ?, ?, ?)';
+    db.query(sql, [projectId, name, amount, price, sum], (err, result) => {
+        if (err) return res.status(500).json("Error");
+        res.json({ id: result.insertId });
+    });
+});
+
+// Получение расходов по проекту
+app.get('/expenses/:projectId', authenticateToken, (req, res) => {
+    const { projectId } = req.params;
+    const sql = 'SELECT * FROM expenses WHERE project_id = ?';
+    db.query(sql, [projectId], (err, results) => {
+        if (err) return res.status(500).json("Error");
+        res.json(results);
+    });
+});
+
+// Обновление расхода
+app.put('/expenses/:id', authenticateToken, (req, res) => {
+    const { id } = req.params;
+    const { name, amount, price, sum } = req.body;
+    const fields = [];
+    const values = [];
+
+    if (name !== undefined) {
+        fields.push('name = ?');
+        values.push(name);
+    }
+
+    if (amount !== undefined) {
+        if (amount < 0) return res.status(400).json("Invalid amount value");
+        fields.push('amount = ?');
+        values.push(amount);
+    }
+
+    if (price !== undefined) {
+        if (price < 0) return res.status(400).json("Invalid price value");
+        fields.push('price = ?');
+        values.push(price);
+    }
+
+    if (sum !== undefined) {
+        if (sum < 0) return res.status(400).json("Invalid sum value");
+        fields.push('sum = ?');
+        values.push(sum);
+    }
+
+    if (fields.length === 0) return res.status(400).json("No fields to update");
+
+    values.push(id);
+
+    const sql = `UPDATE expenses SET ${fields.join(', ')} WHERE id = ?`;
+    db.query(sql, values, (err) => {
+        if (err) return res.status(500).json("Error");
+        res.json('Success');
+    });
+});
+
+// Удаление расхода
+app.delete('/expenses/:id', authenticateToken, (req, res) => {
+    const { id } = req.params;
+    const sql = 'DELETE FROM expenses WHERE id = ?';
+    db.query(sql, [id], (err) => {
+        if (err) return res.status(500).json("Error");
+        res.json('Success');
+    });
+});
+
 app.listen(8081, () => {
     console.log('Server is running on port 8081');
 });
