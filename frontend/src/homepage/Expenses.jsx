@@ -17,49 +17,46 @@ function Expenses({ searchQuery }) {
   const [selectedProjectIndex, setSelectedProjectIndex] = useState(null);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProjectsAndExpenses = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:8081/projects', {
+        
+        // Fetch projects
+        const projectsResponse = await axios.get('http://localhost:8081/projects', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-        setProjects(response.data);
+        setProjects(projectsResponse.data);
+        
+        // Fetch expenses for all projects
+        const expensesResponses = await Promise.all(
+          projectsResponse.data.map(project =>
+            axios.get(`http://localhost:8081/expenses/${project.id}`, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            })
+          )
+        );
+        const allExpenses = expensesResponses.flatMap(response => response.data);
+        setExpenses(allExpenses);
+
+        // Calculate total expenses
+        const totalExpenses = allExpenses.reduce((total, expense) => total + Number(expense.sum), 0);
+        setTotal(totalExpenses);
       } catch (error) {
-        console.error('Ошибка при получении проектов:', error);
+        console.error('Ошибка при получении данных:', error);
       }
     };
 
-    fetchProjects();
+    fetchProjectsAndExpenses();
   }, []);
-
-  useEffect(() => {
-    if (selectedProjectIndex === null) return;
-
-    const fetchExpenses = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8081/expenses/${selectedProjectIndex}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        setExpenses(response.data);
-        const total = response.data.reduce((total, expense) => total + Number(expense.sum), 0);
-        setTotal(total);
-      } catch (error) {
-        console.error('Ошибка при получении расходов:', error);
-      }
-    };
-
-    fetchExpenses();
-  }, [selectedProjectIndex]);
 
   const calculation = () => {
     if (selectedProjectIndex === null) return;
 
-    const newExpense = { name, amount, price, sum };
+    const newExpense = { name, amount, price, sum, project_id: selectedProjectIndex };
     const updatedExpenses = [...expenses, newExpense];
 
     setExpenses(updatedExpenses);
@@ -106,13 +103,17 @@ function Expenses({ searchQuery }) {
 
   const handleDelete = (expenseId) => {
     if (window.confirm("Удалить расход?")) {
-      setExpenses(expenses.filter(expense => expense.id !== expenseId));
-      setTotal(total - expenses.find(expense => expense.id === expenseId).sum);
+      const expenseToDelete = expenses.find(expense => expense.id === expenseId);
+      if (expenseToDelete) {
+        const updatedExpenses = expenses.filter(expense => expense.id !== expenseId);
+        setExpenses(updatedExpenses);
+        setTotal(updatedExpenses.reduce((total, expense) => total + Number(expense.sum), 0));
 
-      const token = localStorage.getItem('token');
-      axios.delete(`http://localhost:8081/expenses/${expenseId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      }).catch(error => console.error('Ошибка при удалении расхода:', error));
+        const token = localStorage.getItem('token');
+        axios.delete(`http://localhost:8081/expenses/${expenseId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }).catch(error => console.error('Ошибка при удалении расхода:', error));
+      }
     }
   };
 
@@ -177,16 +178,18 @@ function Expenses({ searchQuery }) {
     }
   };
 
-  // Генерируем опции с обновленными индексами
-  const options = projects.map((project, index) => ({
+  const options = projects.map((project) => ({
     value: project.id,
     label: project.title
   }));
 
-  // Фильтрация проектов по запросу поиска
   const filteredProjects = projects.filter(project =>
     project.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const getFilteredExpenses = (projectId) => {
+    return expenses.filter(expense => expense.project_id === projectId);
+  };
 
   const styles = {
     control: (provided, state) => ({
@@ -229,26 +232,19 @@ function Expenses({ searchQuery }) {
     })
   };
 
-  const optionsWithLastFlag = options.map((option, index) => ({
-    ...option,
-    isLast: index === options.length - 1
-  }));
-
-  const noOptionsMessage = () => "Проектов нет";
-
   return (
     <section id='dashboard-main' className='main-container'>
       <div className="expenses-list">
         <div className="add-list">
-          <form action="" className='add-input-form'>
+          <form className='add-input-form'>
             <Select
               options={options}
-              value={optionsWithLastFlag.find(option => option.value === selectedProjectIndex)}
+              value={options.find(option => option.value === selectedProjectIndex)}
               onChange={handleSelectChange}
               placeholder="Выберите проект"
               className="project-select"
               styles={styles}
-              noOptionsMessage={noOptionsMessage}
+              noOptionsMessage={() => "Проектов нет"}
             />
             <input
               type="text"
@@ -278,7 +274,9 @@ function Expenses({ searchQuery }) {
               disabled
             />
           </form>
-          <button className='btn-success' type='button' onClick={calculation}><FaPlus className='add-icon' /></button>
+          <button className='btn-success' type='button' onClick={calculation}>
+            <FaPlus className='add-icon' />
+          </button>
         </div>
         {filteredProjects.map((project, index) => (
           <div key={index} className="post-card">
@@ -311,7 +309,7 @@ function Expenses({ searchQuery }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {expenses.filter(expense => expense.project_id === project.id).map((expense, expenseIdx) => (
+                    {getFilteredExpenses(project.id).map((expense, expenseIdx) => (
                       <tr key={expenseIdx}>
                         <td>{expense.name}</td>
                         <td>{expense.amount}</td>
@@ -326,13 +324,13 @@ function Expenses({ searchQuery }) {
                     ))}
                   </tbody>
                 </table>
+                </div>
+                <span className="end-price">
+                  <h3>Общие затраты: {getFilteredExpenses(project.id).reduce((total, expense) => total + Number(expense.sum), 0)}</h3>
+                </span>
               </div>
-              <span className="end-price">
-                <h3>Общие затраты: {expenses.filter(expense => expense.project_id === project.id).reduce((total, expense) => total + Number(expense.sum), 0)}</h3>
-              </span>
             </div>
-          </div>
-        ))}
+          ))}
         <div className="add-project">
           <h4 onClick={handleAddProject}>Добавить проект...</h4>
         </div>
