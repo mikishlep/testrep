@@ -1,6 +1,7 @@
 import React, { useState } from 'react'; // Импортируем useState
 import { BsFillBellFill, BsFillEnvelopeFill, BsPersonCircle, BsSearch, BsJustify } from 'react-icons/bs';
 import '../css/home/home.css';
+import LogoutButton from '../LogoutButton';
 
 function Header({ onSearch, currentPage }) {
   const [query, setQuery] = useState(''); // Состояние для запроса
@@ -32,9 +33,9 @@ function Header({ onSearch, currentPage }) {
         </form>
       </div>
       <div className="header-right">
-        <BsFillBellFill className='icon' />
-        <BsFillEnvelopeFill className='icon' />
-        <BsPersonCircle className='icon' />
+        <button className='hero-btn logout'>
+        <LogoutButton />
+        </button>
       </div>
     </header>
   );

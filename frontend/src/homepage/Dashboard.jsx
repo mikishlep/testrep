@@ -17,12 +17,12 @@ function Number({ n }) {
 
 function Dashboard() {
     
-    const [cardData, setCardData] = useState([
-        { title: 'ПАМЯТНИКИ', count: 1 },
-        { title: 'ВАЗОНЫ', count: 2 },
-        { title: 'СТОЛЕШНИЦЫ', count: 0 },
-        { title: 'РАКОВИНЫ', count: 0 },
-    ]);
+    // const [cardData, setCardData] = useState([
+    //     { title: 'ПАМЯТНИКИ', count: 1 },
+    //     { title: 'ВАЗОНЫ', count: 2 },
+    //     { title: 'СТОЛЕШНИЦЫ', count: 0 },
+    //     { title: 'РАКОВИНЫ', count: 0 },
+    // ]);
 
     const [inputValues, setInputValues] = useState({
         month: '',
@@ -33,21 +33,21 @@ function Dashboard() {
     });
     const [dashboardStats, setDashboardStats] = useState([]);
 
-    useEffect(() => {
-        const fetchCardData = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8081/dashboard-stat', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                setDashboardStats(response.data);
-            } catch (error) {
-                console.error('Error fetching dashboard stats:', error);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchCardData = async () => {
+    //         try {
+    //             const token = localStorage.getItem('token');
+    //             const response = await axios.get('http://localhost:8081/dashboard-stat', {
+    //                 headers: { 'Authorization': `Bearer ${token}` }
+    //             });
+    //             setDashboardStats(response.data);
+    //         } catch (error) {
+    //             console.error('Error fetching dashboard stats:', error);
+    //         }
+    //     };
 
-        fetchCardData();
-    }, []);
+    //     fetchCardData();
+    // }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -106,7 +106,7 @@ function Dashboard() {
 
     return (
         <section id='dashboard-main' className='main-container'>
-            <div className="main-cards">
+            {/* <div className="main-cards">
                 {cardData.map((card, index) => (
                     <div className="card" key={index}>
                         <div className="card-inner">
@@ -121,7 +121,7 @@ function Dashboard() {
                         </h1>
                     </div>
                 ))}
-            </div>
+            </div> */}
 
             <div className="charts">
                 <div className="expenses-list">

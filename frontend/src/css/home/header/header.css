@@ -40,4 +40,8 @@
     caret-color: var(--caret-color);
 }
 
+.logout {
+    padding: .4rem 2rem;
+}
+
 /* header-end */

@@ -79,7 +79,7 @@
     grid-template-columns: 1fr;
     grid-template-rows: repeat(2, 1fr);
     gap: .5rem;
-    margin-top: 2.9rem;
+    /* margin-top: 2.9rem; */
     height: 37.4rem;
     user-select: none;
 }
