@@ -74,16 +74,6 @@
     font-size: 1.7rem;
 }
 
-.charts {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(2, 1fr);
-    gap: .5rem;
-    /* margin-top: 2.9rem; */
-    height: 37.4rem;
-    user-select: none;
-}
-
 .graphics {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -137,4 +127,23 @@
 
 .dashboard-table {
     margin-top: 3rem;
+}
+
+.notes {
+    margin-top: 3rem;
+}
+
+.notes-input {
+    width: 100%;
+    min-height: 50px; /* Set a minimum height */
+    overflow: hidden; /* Hide scrollbar */
+    resize: none; /* Disable manual resizing */
+    color: var(--text-secondary);
+    border: 3px solid #605d8d;
+    border-radius: 10px;
+    padding: .7rem 2rem;
+}
+
+.notes-input:focus {
+    outline: none;
 }

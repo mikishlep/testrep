@@ -16,14 +16,6 @@ function Number({ n }) {
 }
 
 function Dashboard() {
-    
-    // const [cardData, setCardData] = useState([
-    //     { title: 'ПАМЯТНИКИ', count: 1 },
-    //     { title: 'ВАЗОНЫ', count: 2 },
-    //     { title: 'СТОЛЕШНИЦЫ', count: 0 },
-    //     { title: 'РАКОВИНЫ', count: 0 },
-    // ]);
-
     const [inputValues, setInputValues] = useState({
         month: '',
         income: '',
@@ -33,21 +25,21 @@ function Dashboard() {
     });
     const [dashboardStats, setDashboardStats] = useState([]);
 
-    // useEffect(() => {
-    //     const fetchCardData = async () => {
-    //         try {
-    //             const token = localStorage.getItem('token');
-    //             const response = await axios.get('http://localhost:8081/dashboard-stat', {
-    //                 headers: { 'Authorization': `Bearer ${token}` }
-    //             });
-    //             setDashboardStats(response.data);
-    //         } catch (error) {
-    //             console.error('Error fetching dashboard stats:', error);
-    //         }
-    //     };
+    useEffect(() => {
+        const fetchDashboardStats = async () => {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await axios.get('http://localhost:8081/dashboard-stat', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                setDashboardStats(response.data);
+            } catch (error) {
+                console.error('Error fetching dashboard stats:', error);
+            }
+        };
 
-    //     fetchCardData();
-    // }, []);
+        fetchDashboardStats();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -69,6 +61,7 @@ function Dashboard() {
             }, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+
             // Refresh data
             const response = await axios.get('http://localhost:8081/dashboard-stat', {
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -88,11 +81,25 @@ function Dashboard() {
         });
     };
 
+    const handleTextAreaChange = (e) => {
+        const { name, value } = e.target;
+        setInputValues((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    
+        // Automatically adjust the height of the textarea
+        const textarea = e.target;
+        textarea.style.height = 'auto'; // Reset height to auto to get the scrollHeight correctly
+        textarea.style.height = `${textarea.scrollHeight}px`; // Set height to the scrollHeight
+    };    
+
     const handleDeleteExpense = async (id) => {
         try {
             await axios.delete(`http://localhost:8081/dashboard-stat/${id}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
+
             // Refresh data
             const response = await axios.get('http://localhost:8081/dashboard-stat', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
@@ -106,6 +113,7 @@ function Dashboard() {
 
     return (
         <section id='dashboard-main' className='main-container'>
+            {/* Cards section (commented out) */}
             {/* <div className="main-cards">
                 {cardData.map((card, index) => (
                     <div className="card" key={index}>
@@ -204,6 +212,16 @@ function Dashboard() {
                         </table>
                     </div>
                 </div>
+            </div>
+
+            <div className="notes">
+                <textarea
+                    className='notes-input'
+                    value={inputValues.notes}
+                    onChange={handleTextAreaChange}
+                    name='notes'
+                    placeholder='Введите заметки...'
+                ></textarea>
             </div>
         </section>
     );
