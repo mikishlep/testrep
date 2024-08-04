@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill } from 'react-icons/bs';
 import { useSpring, animated } from "react-spring";
+import { FaPlus, FaTrash, FaTimes } from 'react-icons/fa';
 
 function Number({ n }) {
     const { number } = useSpring({
@@ -92,104 +93,40 @@ function Dashboard() {
             </div>
 
             <div className="charts">
-                <ResponsiveContainer width="100%" height={300}>
-                    <BarChart
-                        data={moneyData}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Bar dataKey="доходы" fill="#8884d8" />
-                        <Bar dataKey="расходы" fill="#82ca9d" />
-                    </BarChart>
-                </ResponsiveContainer>
-
-                <ResponsiveContainer width="100%" height={300}>
-                    <LineChart
-                        data={profitData}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Line type="monotone" dataKey="чистая_прибыль" stroke="#8884d8" />
-                        <Line type="monotone" dataKey="валовая_прибыль" stroke="#82ca9d" />
-                    </LineChart>
-                </ResponsiveContainer>
-            </div>
-
-            <button onClick={() => setEditing(!editing)} className="edit-button">
-                {editing ? "Скрыть форму ввода" : "Изменить графики"}
-            </button>
-
-            {editing && (
-                <div className="graphics">
-                    <div className="paint-graphic">
-                        <h3>ДОХОДЫ - РАСХОДЫ</h3>
-                        {moneyData.map((data, index) => (
-                            <div key={index}>
-                                <h4>{data.name}</h4>
-                                <input
-                                    type="number"
-                                    value={data.доходы}
-                                    onChange={(e) => handleChangeMoneyData(index, 'доходы', e.target.value)}
-                                    placeholder="Доходы"
-                                    className='graphic-config'
-                                />
-                                <input
-                                    type="number"
-                                    value={data.расходы}
-                                    onChange={(e) => handleChangeMoneyData(index, 'расходы', e.target.value)}
-                                    placeholder="Расходы"
-                                    className='graphic-config'
-                                />
-                            </div>
-                        ))}
-                    </div>
-                    <div className="paint-graphic">
-                        <h3>ЧИСТАЯ - ВАЛОВАЯ</h3>
-                        {profitData.map((data, index) => (
-                            <div key={index}>
-                                <h4>{data.name}</h4>
-                                <input
-                                    type="number"
-                                    value={data.чистая_прибыль}
-                                    onChange={(e) => handleChangeProfitData(index, 'чистая_прибыль', e.target.value)}
-                                    placeholder="Чистая прибыль"
-                                    className='graphic-config'
-                                />
-                                <input
-                                    type="number"
-                                    value={data.валовая_прибыль}
-                                    onChange={(e) => handleChangeProfitData(index, 'валовая_прибыль', e.target.value)}
-                                    placeholder="Валовая прибыль"
-                                    className='graphic-config'
-                                />
-                            </div>
-                        ))}
-                    </div>
-                    <div className="paint-graphic-left">
-                        <h3>ИЗМЕНИТЬ КАРТОЧКИ</h3>
-                        {cardData.map((card, index) => (
-                            <div key={index}>
-                                <h4>{card.title}</h4>
-                                <input
-                                    type="number"
-                                    value={card.count}
-                                    onChange={(e) => handleChangeCardData(index, 'count', e.target.value)}
-                                    placeholder="Количество"
-                                    className='graphic-config'
-                                />
-                            </div>
-                        ))}
+                <div className="expenses-list">
+                    <div className="add-list">
+                        <form className='add-input-form'>
+                            <input
+                            type="text"
+                            placeholder='Месяц'
+                            />
+                            <input
+                            type="number"
+                            placeholder='Доходы'
+                            />
+                            <input
+                            type="number"
+                            placeholder='Расходы'
+                            />
+                            <input
+                            type="number"
+                            placeholder='Валовая прибыль'
+                            className='form-control'
+                            id='total_cost'
+                            name='total_cost'
+                            disabled
+                            />
+                            <input
+                            type="number"
+                            placeholder='Чистая прибыль'
+                            />
+                        </form>
+                        <button className='btn-success' type='button'>
+                            <FaPlus className='add-icon' />
+                        </button>
                     </div>
                 </div>
-            )}
+            </div>
         </section>
     );
 }
