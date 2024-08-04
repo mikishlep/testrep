@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill } from 'react-icons/bs';
 import { useSpring, animated } from "react-spring";
+import axios from 'axios';
 
 function Number({ n }) {
     const { number } = useSpring({
@@ -15,6 +16,7 @@ function Number({ n }) {
 }
 
 function Dashboard() {
+    
     const [cardData, setCardData] = useState([
         { title: 'ПАМЯТНИКИ', count: 1 },
         { title: 'ВАЗОНЫ', count: 2 },
@@ -22,9 +24,6 @@ function Dashboard() {
         { title: 'РАКОВИНЫ', count: 0 },
     ]);
 
-    // Состояние для хранения записей таблицы
-    const [expenses, setExpenses] = useState([]);
-    // Состояние для хранения значений инпутов
     const [inputValues, setInputValues] = useState({
         month: '',
         income: '',
@@ -32,8 +31,24 @@ function Dashboard() {
         grossProfit: '',
         netProfit: '',
     });
+    const [dashboardStats, setDashboardStats] = useState([]);
 
-    // Функция для обработки изменения инпутов
+    useEffect(() => {
+        const fetchCardData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:8081/dashboard-stat', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                setDashboardStats(response.data);
+            } catch (error) {
+                console.error('Error fetching dashboard stats:', error);
+            }
+        };
+
+        fetchCardData();
+    }, []);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setInputValues((prev) => ({
@@ -42,22 +57,28 @@ function Dashboard() {
         }));
     };
 
-    // Функция для добавления записи
-    const handleAddExpense = () => {
-        const currentYear = new Date().getFullYear(); // Получение текущего года
+    const handleAddExpense = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            await axios.post('http://localhost:8081/dashboard-stat', {
+                month: inputValues.month,
+                income: inputValues.income,
+                expenses: inputValues.expenses,
+                grossProfit: inputValues.grossProfit,
+                netProfit: inputValues.netProfit
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            // Refresh data
+            const response = await axios.get('http://localhost:8081/dashboard-stat', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setDashboardStats(response.data);
+        } catch (error) {
+            console.error('Error adding dashboard record:', error);
+        }
 
-        setExpenses((prev) => [
-            ...prev,
-            {
-                name: inputValues.month,
-                amount: inputValues.income,
-                price: inputValues.expenses,
-                sum: inputValues.grossProfit,
-                netProfit: inputValues.netProfit,
-                year: currentYear, // Добавление года в данные записи
-            }
-        ]);
-        // Очистить инпуты
+        // Clear inputs
         setInputValues({
             month: '',
             income: '',
@@ -67,9 +88,20 @@ function Dashboard() {
         });
     };
 
-    // Функция для удаления записи
-    const handleDeleteExpense = (index) => {
-        setExpenses((prev) => prev.filter((_, i) => i !== index));
+    const handleDeleteExpense = async (id) => {
+        try {
+            await axios.delete(`http://localhost:8081/dashboard-stat/${id}`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            // Refresh data
+            const response = await axios.get('http://localhost:8081/dashboard-stat', {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            setDashboardStats(response.data);
+        } catch (error) {
+            console.error('Error deleting dashboard record:', error);
+            alert('Failed to delete record. Please try again.');
+        }
     };
 
     return (
@@ -139,7 +171,7 @@ function Dashboard() {
                     {/* Таблица */}
                     <div className="post__content">
                         <table className="expense-table dashboard-table">
-                            {expenses.length > 0 && (
+                            {dashboardStats.length > 0 && (
                                 <thead>
                                     <tr>
                                         <th>Месяц</th>
@@ -147,22 +179,22 @@ function Dashboard() {
                                         <th>Расходы</th>
                                         <th>Валовая прибыль</th>
                                         <th>Чистая прибыль</th>
-                                        <th>Год</th> {/* Добавлен столбец для года */}
+                                        <th>Год</th>
                                         <th>Действие</th>
                                     </tr>
                                 </thead>
                             )}
                             <tbody>
-                                {expenses.map((expense, index) => (
-                                    <tr key={index}>
-                                        <td>{expense.name}</td>
-                                        <td>{expense.amount}</td>
-                                        <td>{expense.price}</td>
-                                        <td>{expense.sum}</td>
-                                        <td>{expense.netProfit}</td>
-                                        <td>{expense.year}</td> {/* Отображение года */}
+                                {dashboardStats.map((record) => (
+                                    <tr key={record.id}>
+                                        <td>{record.month}</td>
+                                        <td>{record.income}</td>
+                                        <td>{record.expenses}</td>
+                                        <td>{record.grossProfit}</td>
+                                        <td>{record.netProfit}</td>
+                                        <td>{record.year}</td>
                                         <td>
-                                            <button onClick={() => handleDeleteExpense(index)} className="btn-delete">
+                                            <button onClick={() => handleDeleteExpense(record.id)} className="btn-delete">
                                                 <FaTrash />
                                             </button>
                                         </td>

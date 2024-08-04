@@ -308,6 +308,55 @@ app.delete('/expenses/:id', authenticateToken, (req, res) => {
     });
 });
 
+// Create a new dashboard record
+app.post('/dashboard-stat', authenticateToken, (req, res) => {
+    const { month, income, expenses, grossProfit, netProfit } = req.body;
+    const userId = req.user.userId;
+    const sql = 'INSERT INTO dashboard_stat (month, income, expenses, grossProfit, netProfit, year, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const year = new Date().getFullYear();
+    db.query(sql, [month, income, expenses, grossProfit, netProfit, year, userId], (err, result) => {
+        if (err) return res.status(500).json("Error");
+        res.json({ id: result.insertId });
+    });
+});
+
+// Get all dashboard records for the user
+app.get('/dashboard-stat', authenticateToken, (req, res) => {
+    const userId = req.user.userId;
+    const sql = 'SELECT * FROM dashboard_stat WHERE user_id = ?';
+    db.query(sql, [userId], (err, results) => {
+        if (err) return res.status(500).json("Error");
+        res.json(results);
+    });
+});
+
+app.delete('/dashboard-stat/:id', authenticateToken, (req, res) => {
+    const { id } = req.params;
+    const userId = req.user.userId;
+
+    // Проверяем существование записи перед удалением
+    const checkSql = 'SELECT * FROM dashboard_stat WHERE id = ? AND user_id = ?';
+    db.query(checkSql, [id, userId], (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json("Error");
+        }
+        if (results.length === 0) {
+            return res.status(404).json("Record not found");
+        }
+
+        // Удаление записи
+        const deleteSql = 'DELETE FROM dashboard_stat WHERE id = ? AND user_id = ?';
+        db.query(deleteSql, [id, userId], (err) => {
+            if (err) {
+                console.error('Error deleting record:', err);
+                return res.status(500).json("Error");
+            }
+            res.json('Success');
+        });
+    });
+});
+
 app.listen(8081, () => {
     console.log('Server is running on port 8081');
 });
