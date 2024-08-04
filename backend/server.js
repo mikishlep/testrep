@@ -207,13 +207,34 @@ app.put('/projects/:id', authenticateToken, (req, res) => {
 });
 
 // Удаление проекта
-app.delete('/projects/:id', authenticateToken, (req, res) => {
+app.delete('/projects/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
-    const sql = 'DELETE FROM projects WHERE id = ? AND user_id = ?';
-    db.query(sql, [id, req.user.userId], (err) => {
-        if (err) return res.status(500).json("Error");
+    const userId = req.user.userId;
+
+    try {
+        // Удаление всех расходов, связанных с проектом
+        const deleteExpensesSql = 'DELETE FROM expenses WHERE project_id = ?';
+        await new Promise((resolve, reject) => {
+            db.query(deleteExpensesSql, [id], (err) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+
+        // Удаление проекта
+        const deleteProjectSql = 'DELETE FROM projects WHERE id = ? AND user_id = ?';
+        await new Promise((resolve, reject) => {
+            db.query(deleteProjectSql, [id, userId], (err) => {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+
         res.json('Success');
-    });
+    } catch (err) {
+        console.error('Ошибка при удалении проекта:', err);
+        res.status(500).json('Error');
+    }
 });
 
 // Добавление расхода
