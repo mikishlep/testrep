@@ -357,6 +357,48 @@ app.delete('/dashboard-stat/:id', authenticateToken, (req, res) => {
     });
 });
 
+// Создание заметки
+app.post('/notes', authenticateToken, (req, res) => {
+    const { note } = req.body;
+    const userId = req.user.userId;
+    const sql = 'INSERT INTO user_notes (user_id, note) VALUES (?, ?)';
+    db.query(sql, [userId, note], (err, result) => {
+        if (err) return res.status(500).json("Error");
+        res.json({ id: result.insertId });
+    });
+});
+
+// Получение всех заметок пользователя
+app.get('/notes', authenticateToken, (req, res) => {
+    const userId = req.user.userId;
+    const sql = 'SELECT * FROM user_notes WHERE user_id = ?';
+    db.query(sql, [userId], (err, results) => {
+        if (err) return res.status(500).json("Error");
+        res.json(results);
+    });
+});
+
+// Обновление заметки
+app.put('/notes/:id', authenticateToken, (req, res) => {
+    const { id } = req.params;
+    const { note } = req.body;
+    const sql = 'UPDATE user_notes SET note = ? WHERE id = ? AND user_id = ?';
+    db.query(sql, [note, id, req.user.userId], (err) => {
+        if (err) return res.status(500).json("Error");
+        res.json('Success');
+    });
+});
+
+// Удаление заметки
+app.delete('/notes/:id', authenticateToken, (req, res) => {
+    const { id } = req.params;
+    const sql = 'DELETE FROM user_notes WHERE id = ? AND user_id = ?';
+    db.query(sql, [id, req.user.userId], (err) => {
+        if (err) return res.status(500).json("Error");
+        res.json('Success');
+    });
+});
+
 app.listen(8081, () => {
     console.log('Server is running on port 8081');
 });

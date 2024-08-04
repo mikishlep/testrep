@@ -137,7 +137,6 @@
     width: 100%;
     min-height: 50px; /* Set a minimum height */
     overflow: hidden; /* Hide scrollbar */
-    resize: none; /* Disable manual resizing */
     color: var(--text-secondary);
     border: 3px solid #605d8d;
     border-radius: 10px;
@@ -146,4 +145,21 @@
 
 .notes-input:focus {
     outline: none;
+}
+
+.note-btn {
+    margin-top: .7rem;
+}
+
+.note-li {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    background: var(--home-secondary);
+    padding: 1rem 2rem;
+    border-radius: 10px;
+}
+
+.notes-ul {
+    margin-top: 3rem;
 }

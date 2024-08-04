@@ -23,6 +23,8 @@ function Dashboard() {
         grossProfit: '',
         netProfit: '',
     });
+
+    const [userNotes, setUserNotes] = useState([]);
     const [dashboardStats, setDashboardStats] = useState([]);
 
     useEffect(() => {
@@ -38,8 +40,62 @@ function Dashboard() {
             }
         };
 
+        const fetchUserNotes = async () => {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await axios.get('http://localhost:8081/notes', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                setUserNotes(response.data);
+            } catch (error) {
+                console.error('Error fetching user notes:', error);
+            }
+        };
+
+        fetchUserNotes();
         fetchDashboardStats();
     }, []);
+
+    const handleAddNote = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            await axios.post('http://localhost:8081/notes', {
+                note: inputValues.notes
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            // Refresh notes
+            const response = await axios.get('http://localhost:8081/notes', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setUserNotes(response.data);
+        } catch (error) {
+            console.error('Error adding note:', error);
+        }
+
+        // Clear note input
+        setInputValues(prev => ({
+            ...prev,
+            notes: ''
+        }));
+    };
+
+    const handleDeleteNote = async (id) => {
+        try {
+            await axios.delete(`http://localhost:8081/notes/${id}`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+
+            // Refresh notes
+            const response = await axios.get('http://localhost:8081/notes', {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            setUserNotes(response.data);
+        } catch (error) {
+            console.error('Error deleting note:', error);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -218,10 +274,23 @@ function Dashboard() {
                 <textarea
                     className='notes-input'
                     value={inputValues.notes}
-                    onChange={handleTextAreaChange}
+                    onChange={handleInputChange}
                     name='notes'
                     placeholder='Введите заметки...'
                 ></textarea>
+                <button className='btn-success' type='button' onClick={handleAddNote}>
+                    <button className='hero-btn note-btn'>Создать заметку</button>
+                </button>
+                <ul className='notes-ul'>
+                    {userNotes.map((note) => (
+                        <li key={note.id} className='note-li'>
+                            {note.note}
+                            <button onClick={() => handleDeleteNote(note.id)} className="btn-delete">
+                                <FaTrash />
+                            </button>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </section>
     );
