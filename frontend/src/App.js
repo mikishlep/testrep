@@ -3,6 +3,7 @@ import Login from './reglog/Login'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Signup from './reglog/Signup'
 import Home from './homepage/Home'
+import PrivateRoute from './PrivateRoute'
 
 function App() {
   return (
@@ -10,7 +11,7 @@ function App() {
     <Routes>
       <Route path='/login' element={<Login />}></Route>
       <Route path='/signup' element={<Signup />}></Route>
-      <Route path='/home' element={<Home />}></Route>
+      <Route path='/home' element={<PrivateRoute element={<Home />} />} />
     </Routes>
     </BrowserRouter>
   )
