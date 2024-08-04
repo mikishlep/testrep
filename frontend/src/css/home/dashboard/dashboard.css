@@ -134,3 +134,7 @@
     font-weight: 700;
     border-radius: 7px;
 }
+
+.dashboard-table {
+    margin-top: 3rem;
+}
