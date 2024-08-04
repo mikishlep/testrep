@@ -310,11 +310,11 @@ app.delete('/expenses/:id', authenticateToken, (req, res) => {
 
 // Create a new dashboard record
 app.post('/dashboard-stat', authenticateToken, (req, res) => {
-    const { month, income, expenses, grossProfit, netProfit } = req.body;
+    const { month, grossProfit, netProfit } = req.body;
     const userId = req.user.userId;
-    const sql = 'INSERT INTO dashboard_stat (month, income, expenses, grossProfit, netProfit, year, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO dashboard_stat (month, grossProfit, netProfit, year, user_id) VALUES (?, ?, ?, ?, ?)';
     const year = new Date().getFullYear();
-    db.query(sql, [month, income, expenses, grossProfit, netProfit, year, userId], (err, result) => {
+    db.query(sql, [month, grossProfit, netProfit, year, userId], (err, result) => {
         if (err) return res.status(500).json("Error");
         res.json({ id: result.insertId });
     });

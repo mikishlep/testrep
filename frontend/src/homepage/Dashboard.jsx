@@ -130,8 +130,6 @@ function Dashboard() {
         // Clear inputs
         setInputValues({
             month: '',
-            income: '',
-            expenses: '',
             grossProfit: '',
             netProfit: '',
         });
@@ -200,20 +198,6 @@ function Dashboard() {
                             />
                             <input
                                 type="number"
-                                name="income"
-                                value={inputValues.income}
-                                placeholder='Доходы'
-                                onChange={handleInputChange}
-                            />
-                            <input
-                                type="number"
-                                name="expenses"
-                                value={inputValues.expenses}
-                                placeholder='Расходы'
-                                onChange={handleInputChange}
-                            />
-                            <input
-                                type="number"
                                 name="grossProfit"
                                 value={inputValues.grossProfit}
                                 placeholder='Валовая прибыль'
@@ -239,8 +223,6 @@ function Dashboard() {
                                 <thead>
                                     <tr>
                                         <th>Месяц</th>
-                                        <th>Доходы</th>
-                                        <th>Расходы</th>
                                         <th>Валовая прибыль</th>
                                         <th>Чистая прибыль</th>
                                         <th>Год</th>
@@ -252,8 +234,6 @@ function Dashboard() {
                                 {dashboardStats.map((record) => (
                                     <tr key={record.id}>
                                         <td>{record.month}</td>
-                                        <td>{record.income}</td>
-                                        <td>{record.expenses}</td>
                                         <td>{record.grossProfit}</td>
                                         <td>{record.netProfit}</td>
                                         <td>{record.year}</td>
