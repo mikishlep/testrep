@@ -4,6 +4,8 @@ import { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill }
 import { useSpring, animated } from "react-spring";
 import axios from 'axios';
 
+const apiURL = process.env.REACT_APP_API;
+
 function Number({ n }) {
     const { number } = useSpring({
         from: { number: 0 },
@@ -31,7 +33,7 @@ function Dashboard() {
         const fetchDashboardStats = async () => {
             const token = localStorage.getItem('token');
             try {
-                const response = await axios.get('http://localhost:8081/dashboard-stat', {
+                const response = await axios.get(`${apiURL}/dashboard-stat`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 setDashboardStats(response.data);
@@ -43,7 +45,7 @@ function Dashboard() {
         const fetchUserNotes = async () => {
             const token = localStorage.getItem('token');
             try {
-                const response = await axios.get('http://localhost:8081/notes', {
+                const response = await axios.get(`${apiURL}/notes`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 setUserNotes(response.data);
@@ -59,14 +61,14 @@ function Dashboard() {
     const handleAddNote = async () => {
         const token = localStorage.getItem('token');
         try {
-            await axios.post('http://localhost:8081/notes', {
+            await axios.post(`${apiURL}/notes`, {
                 note: inputValues.notes
             }, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
             // Refresh notes
-            const response = await axios.get('http://localhost:8081/notes', {
+            const response = await axios.get(`${apiURL}/notes`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setUserNotes(response.data);
@@ -83,12 +85,12 @@ function Dashboard() {
 
     const handleDeleteNote = async (id) => {
         try {
-            await axios.delete(`http://localhost:8081/notes/${id}`, {
+            await axios.delete(`${apiURL}/notes/${id}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
 
             // Refresh notes
-            const response = await axios.get('http://localhost:8081/notes', {
+            const response = await axios.get(`${apiURL}/notes`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setUserNotes(response.data);
@@ -108,7 +110,7 @@ function Dashboard() {
     const handleAddExpense = async () => {
         const token = localStorage.getItem('token');
         try {
-            await axios.post('http://localhost:8081/dashboard-stat', {
+            await axios.post(`${apiURL}/dashboard-stat`, {
                 month: inputValues.month,
                 income: inputValues.income,
                 expenses: inputValues.expenses,
@@ -119,7 +121,7 @@ function Dashboard() {
             });
 
             // Refresh data
-            const response = await axios.get('http://localhost:8081/dashboard-stat', {
+            const response = await axios.get(`${apiURL}/dashboard-stat`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setDashboardStats(response.data);
@@ -150,12 +152,12 @@ function Dashboard() {
 
     const handleDeleteExpense = async (id) => {
         try {
-            await axios.delete(`http://localhost:8081/dashboard-stat/${id}`, {
+            await axios.delete(`${apiURL}/dashboard-stat/${id}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
 
             // Refresh data
-            const response = await axios.get('http://localhost:8081/dashboard-stat', {
+            const response = await axios.get(`${apiURL}/dashboard-stat`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setDashboardStats(response.data);

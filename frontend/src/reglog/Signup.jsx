@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import Validation from './LoginValidation';
 import axios from 'axios';
 
+const apiURL = process.env.REACT_APP_API;
+
 function Signup() {
     const [values, setValues] = useState({
         realname: '',
@@ -26,7 +28,7 @@ function Signup() {
 
         if (Object.keys(validationErrors).length === 0) {
             console.log('Submitted values:', values);
-            axios.post('http://localhost:8081/signup', values)
+            axios.post(`${apiURL}/signup`, values)
                 .then(res => {
                     console.log('Response from server:', res.data);
                     if (res.data === "Success") {

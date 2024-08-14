@@ -4,6 +4,8 @@ import { FaPlus, FaTrash, FaTimes } from 'react-icons/fa';
 import Select from 'react-select';
 import axios from 'axios';
 
+const apiURL = process.env.REACT_APP_API;
+
 function Expenses({ searchQuery }) {
   const [price, setPrice] = useState('');
   const [amount, setAmount] = useState('');
@@ -22,7 +24,7 @@ function Expenses({ searchQuery }) {
         const token = localStorage.getItem('token');
         
         // Fetch projects
-        const projectsResponse = await axios.get('http://localhost:8081/projects', {
+        const projectsResponse = await axios.get(`${apiURL}/projects`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -32,7 +34,7 @@ function Expenses({ searchQuery }) {
         // Fetch expenses for all projects
         const expensesResponses = await Promise.all(
           projectsResponse.data.map(project =>
-            axios.get(`http://localhost:8081/expenses/${project.id}`, {
+            axios.get(`${apiURL}/expenses/${project.id}`, {
               headers: {
                 'Authorization': `Bearer ${token}`
               }
@@ -63,7 +65,7 @@ function Expenses({ searchQuery }) {
     setTotal(updatedExpenses.reduce((total, expense) => total + Number(expense.sum), 0));
 
     const token = localStorage.getItem('token');
-    axios.post('http://localhost:8081/expenses', { 
+    axios.post(`${apiURL}/expenses`, { 
       projectId: selectedProjectIndex, 
       name, 
       amount, 
@@ -110,7 +112,7 @@ function Expenses({ searchQuery }) {
         setTotal(updatedExpenses.reduce((total, expense) => total + Number(expense.sum), 0));
 
         const token = localStorage.getItem('token');
-        axios.delete(`http://localhost:8081/expenses/${expenseId}`, {
+        axios.delete(`${apiURL}/expenses/${expenseId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }).catch(error => console.error('Ошибка при удалении расхода:', error));
       }
@@ -125,7 +127,7 @@ function Expenses({ searchQuery }) {
       setSelectedProjectIndex(null);
 
       const token = localStorage.getItem('token');
-      axios.delete(`http://localhost:8081/projects/${deletedProject.id}`, {
+      axios.delete(`${apiURL}/projects/${deletedProject.id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       }).catch(error => console.error('Ошибка при удалении проекта:', error));
     }
@@ -141,7 +143,7 @@ function Expenses({ searchQuery }) {
       const updatedProject = { ...projects[editingIndex], title: editTitle };
       try {
         const token = localStorage.getItem('token');
-        await axios.put(`http://localhost:8081/projects/${updatedProject.id}`, updatedProject, {
+        await axios.put(`${apiURL}/projects/${updatedProject.id}`, updatedProject, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const updatedProjects = [...projects];
@@ -162,7 +164,7 @@ function Expenses({ searchQuery }) {
     try {
       const token = localStorage.getItem('token');
       const newProject = { title: 'Новый проект' };
-      const response = await axios.post('http://localhost:8081/projects', newProject, {
+      const response = await axios.post(`${apiURL}/projects`, newProject, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const addedProject = { ...newProject, id: response.data.id };

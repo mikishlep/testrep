@@ -4,6 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import Validation from './LoginValidation';
 import axios from 'axios';
 
+const apiURL = process.env.REACT_APP_API;
+console.log('API URL:', apiURL);
+
 function Login() {
     const [values, setValues] = useState({
         username: '',
@@ -25,7 +28,7 @@ function Login() {
 
         if (Object.keys(validationErrors).length === 0) {
             console.log('Submitted values:', values);
-            axios.post('http://localhost:8081/login', values)
+            axios.post(`${apiURL}/login`, values)
                 .then(res => {
                     console.log('Response from server:', res.data);
                     if (res.data.token) {

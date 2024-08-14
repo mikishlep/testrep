@@ -4,6 +4,8 @@ import { FaPlus } from 'react-icons/fa';
 import { CiSquarePlus, CiSquareMinus } from "react-icons/ci";
 import axios from 'axios';
 
+const apiURL = process.env.REACT_APP_API;
+
 function Inventory({ searchQuery }) {
   const [cards, setCards] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -14,7 +16,7 @@ function Inventory({ searchQuery }) {
     const fetchCards = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:8081/cards', {
+        const response = await axios.get(`${apiURL}/cards`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -33,7 +35,7 @@ function Inventory({ searchQuery }) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:8081/cards', newCard, {
+      const response = await axios.post(`${apiURL}/cards`, newCard, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -59,7 +61,7 @@ function Inventory({ searchQuery }) {
 
       try {
         const token = localStorage.getItem('token');
-        await axios.put(`http://localhost:8081/cards/${updatedCard.id}`, updatedCard, {
+        await axios.put(`${apiURL}/cards/${updatedCard.id}`, updatedCard, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -81,7 +83,7 @@ function Inventory({ searchQuery }) {
             updatedCard.count += 1;
             console.log('Increasing count for card:', updatedCard); // Логирование перед запросом
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:8081/cards/${id}`, { count: updatedCard.count }, {
+            await axios.put(`${apiURL}/cards/${id}`, { count: updatedCard.count }, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -106,7 +108,7 @@ function Inventory({ searchQuery }) {
                 updatedCard.count -= 1;
                 console.log('Decreasing count for card:', updatedCard); // Логирование перед запросом
                 const token = localStorage.getItem('token');
-                await axios.put(`http://localhost:8081/cards/${id}`, { count: updatedCard.count }, {
+                await axios.put(`${apiURL}/cards/${id}`, { count: updatedCard.count }, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -120,7 +122,7 @@ function Inventory({ searchQuery }) {
                 // Удаление карточки
                 console.log('Removing card with id:', id); // Логирование перед запросом
                 const token = localStorage.getItem('token');
-                await axios.delete(`http://localhost:8081/cards/${id}`, {
+                await axios.delete(`${apiURL}/cards/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
